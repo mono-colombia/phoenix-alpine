@@ -1,3 +1,5 @@
+FROM thobe/wkhtmltopdf-base:latest as wkhtmltopdf
+
 FROM alpine:3.13
 LABEL maintainer="Jhon Pedroza <jpedroza@cuentamono.com>"
 ENV ERLANG_VERSION=23.2.7
@@ -45,6 +47,9 @@ RUN \
       rm -rf /var/cache/apk/* && \
       chmod +x /usr/bin/wkhtmltopdf && \
       apk add g++
+
+COPY --from=wkhtmltopdf /bin/wkhtmltopdf usr/bin/wkhtmltopdf
+
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
