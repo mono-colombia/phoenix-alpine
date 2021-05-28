@@ -32,7 +32,8 @@ RUN \
       automake \
       autoconf \
       gcc \
-      perl-dev
+      perl-dev \
+      poppler-utils
   RUN apk --no-cache add -U musl musl-dev ncurses-libs libssl1.1 libressl3.1-libcrypto bash \
       qt5-qtwebkit qt5-qtbase-x11 qt5-qtsvg qt5-qtdeclarative qt5-qtsvg qt5-qtbase
   RUN apk add --update-cache \
