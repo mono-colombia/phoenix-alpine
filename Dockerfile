@@ -3,7 +3,7 @@ FROM thobe/wkhtmltopdf-base:latest as wkhtmltopdf
 FROM alpine:3.13
 LABEL maintainer="Jhon Pedroza <jpedroza@cuentamono.com>"
 ENV ERLANG_VERSION=23.2.7
-# elixir 1.12.0
+# elixir 1.12.2
 ENV ELIXIR_COMMIT=58ca6524f88bfe7e963deafe0e7d6aa07a568003
 ENV NODE_VERSION=14.16.0
 ENV PHOENIX_VERSION=1.5.7
@@ -47,9 +47,7 @@ RUN \
       wkhtmltopdf && \
       rm -rf /var/cache/apk/* && \
       chmod +x /usr/bin/wkhtmltopdf && \
-      apk add g++
-  RUN apk add --no-cache --update \
-      chromium \
+      apk add g++ chromium \
       chromium-chromedriver
 
 COPY --from=wkhtmltopdf /bin/wkhtmltopdf usr/bin/wkhtmltopdf
