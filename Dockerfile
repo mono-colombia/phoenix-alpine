@@ -1,12 +1,12 @@
 FROM thobe/wkhtmltopdf-base:latest as wkhtmltopdf
 
-FROM alpine:3.13
+FROM alpine:3.15
 LABEL maintainer="Jhon Pedroza <jpedroza@cuentamono.com>"
-ENV ERLANG_VERSION=23.2.7
-# elixir 1.12.2
-ENV ELIXIR_COMMIT=58ca6524f88bfe7e963deafe0e7d6aa07a568003
+ENV ERLANG_VERSION=24.1.7
+# elixir 1.13.0
+ENV ELIXIR_COMMIT=caed7d1d3fe368564f7204680c89ae58c8d7303b
 ENV NODE_VERSION=14.16.0
-ENV PHOENIX_VERSION=1.5.7
+ENV PHOENIX_VERSION=1.6.2
 
 RUN \
     apk add --no-cache --update \
@@ -34,7 +34,7 @@ RUN \
       gcc \
       perl-dev \
       poppler-utils
-  RUN apk --no-cache add -U musl musl-dev ncurses-libs libssl1.1 libressl3.1-libcrypto bash \
+  RUN apk --no-cache add -U musl musl-dev ncurses-libs libssl1.1 libressl3.4-libcrypto bash \
       qt5-qtwebkit qt5-qtbase-x11 qt5-qtsvg qt5-qtdeclarative qt5-qtsvg qt5-qtbase
   RUN apk add --update-cache \
       xvfb \
