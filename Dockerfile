@@ -1,6 +1,6 @@
 FROM thobe/wkhtmltopdf-base:latest as wkhtmltopdf
 
-FROM alpine:3.15
+FROM alpine:3.14
 LABEL maintainer="Jhon Pedroza <jpedroza@cuentamono.com>"
 ENV ERLANG_VERSION=24.1.7
 # elixir 1.13.0
@@ -32,9 +32,10 @@ RUN \
       automake \
       autoconf \
       gcc \
+      grep \
       perl-dev \
       poppler-utils
-  RUN apk --no-cache add -U musl musl-dev ncurses-libs libssl1.1 libressl3.4-libcrypto bash \
+  RUN apk --no-cache add -U musl musl-dev ncurses-libs libssl1.1 libressl3.3-libcrypto bash \
       qt5-qtwebkit qt5-qtbase-x11 qt5-qtsvg qt5-qtdeclarative qt5-qtsvg qt5-qtbase
   RUN apk add --update-cache \
       xvfb \
@@ -57,7 +58,7 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 RUN touch ~/.bashrc
 RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf
-ENV KERL_CONFIGURE_OPTIONS --without-debugger --without-observer --disable-silent-rules --without-javac --enable-shared-zlib --enable-dynamic-ssl-lib --enable-hipe --enable-sctp --enable-smp-support --enable-threads --enable-kernel-poll --enable-wx --disable-debug --without-javac --enable-darwin-64bit
+ENV KERL_CONFIGURE_OPTIONS --without-debugger --without-observer --disable-silent-rules --without-javac --enable-shared-zlib --enable-dynamic-ssl-lib --enable-hipe --enable-smp-support --enable-threads --enable-kernel-poll --enable-wx --disable-debug --without-javac --enable-darwin-64bit
 RUN cd ~/.asdf && git checkout "$(git describe --abbrev=0 --tags)"
 ENV PATH /root/.asdf/bin:/root/.asdf/shims:${PATH}
 RUN /bin/bash -c "source ~/.bashrc"
