@@ -2,11 +2,11 @@ FROM thobe/wkhtmltopdf-base:latest as wkhtmltopdf
 
 FROM alpine:3.14
 LABEL maintainer="Jhon Pedroza <jpedroza@cuentamono.com>"
-ENV ERLANG_VERSION=24.1.7
-# elixir 1.13.0
-ENV ELIXIR_COMMIT=caed7d1d3fe368564f7204680c89ae58c8d7303b
-ENV NODE_VERSION=14.16.0
-ENV PHOENIX_VERSION=1.6.2
+ENV ERLANG_VERSION=24.2
+# elixir 1.13.1
+ENV ELIXIR_COMMIT=33f9d04851a2664aeae5f5f78eeef9e5b4c38030
+ENV NODE_VERSION=14.18.1
+ENV PHOENIX_VERSION=1.6.4
 
 RUN \
     apk add --no-cache --update \
