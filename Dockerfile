@@ -1,5 +1,3 @@
-FROM thobe/wkhtmltopdf-base:latest as wkhtmltopdf
-
 FROM alpine:3.14
 LABEL maintainer="Jhon Pedroza <jpedroza@cuentamono.com>"
 ENV ERLANG_VERSION=24.2
@@ -35,23 +33,15 @@ RUN \
       grep \
       perl-dev \
       poppler-utils
-  RUN apk --no-cache add -U musl musl-dev ncurses-libs libssl1.1 libressl3.3-libcrypto bash \
-      qt5-qtwebkit qt5-qtbase-x11 qt5-qtsvg qt5-qtdeclarative qt5-qtsvg qt5-qtbase
+  RUN apk --no-cache add -U musl musl-dev ncurses-libs libssl1.1 libressl3.3-libcrypto bash weasyprint
   RUN apk add --update-cache \
       xvfb \
       dbus \
       ttf-freefont \
       fontconfig && \
-      apk add --update-cache \
-          --repository http://dl-cdn.alpinelinux.org/alpine/v3.13/community/ \
-          --allow-untrusted \
-      wkhtmltopdf && \
       rm -rf /var/cache/apk/* && \
-      chmod +x /usr/bin/wkhtmltopdf && \
       apk add g++ chromium \
       chromium-chromedriver
-
-COPY --from=wkhtmltopdf /bin/wkhtmltopdf usr/bin/wkhtmltopdf
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
