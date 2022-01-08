@@ -1,4 +1,4 @@
-FROM alpine:3.14
+FROM alpine:3.15
 LABEL maintainer="Jhon Pedroza <jpedroza@cuentamono.com>"
 ENV ERLANG_VERSION=24.2
 # elixir 1.13.1
@@ -33,7 +33,7 @@ RUN \
       grep \
       perl-dev \
       poppler-utils
-  RUN apk --no-cache add -U musl musl-dev ncurses-libs libssl1.1 libressl3.3-libcrypto bash weasyprint
+  RUN apk --no-cache add -U musl musl-dev ncurses-libs libssl1.1 libressl3.4-libcrypto bash weasyprint
   RUN apk add --update-cache \
       xvfb \
       dbus \
@@ -42,6 +42,8 @@ RUN \
       rm -rf /var/cache/apk/* && \
       apk add g++ chromium \
       chromium-chromedriver
+
+RUN wget -O /usr/share/fonts/TTF/Lato-Regular.ttf https://mono-colombia-public.s3.amazonaws.com/fonts/Lato-Regular.ttf
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
