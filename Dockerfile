@@ -1,10 +1,10 @@
 FROM alpine:3.15
 LABEL maintainer="Jhon Pedroza <jpedroza@cuentamono.com>"
-ENV ERLANG_VERSION=24.2
-# elixir 1.13.1
-ENV ELIXIR_COMMIT=33f9d04851a2664aeae5f5f78eeef9e5b4c38030
+ENV ERLANG_VERSION=24.3
+# elixir 1.13.4
+ENV ELIXIR_COMMIT=7e4fbe657dbf9c3e19e3d2bd6c17cc6d724b4710
 ENV NODE_VERSION=14.18.1
-ENV PHOENIX_VERSION=1.6.4
+ENV PHOENIX_VERSION=1.6.6
 
 RUN \
     apk add --no-cache --update \
