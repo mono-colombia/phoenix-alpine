@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - run: docker run --privileged --rm docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
+    - run: docker run --privileged --rm tonistiigi/binfmt --install all
     - run: docker buildx create --use
     - run: docker buildx ls
     - run: docker buildx build --platform linux/amd64,linux/arm64 --tag monocolombia/phoenix-alpine:test .
