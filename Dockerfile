@@ -1,10 +1,10 @@
-FROM alpine:3.15
+FROM alpine:3.16
 LABEL maintainer="Jhon Pedroza <jpedroza@cuentamono.com>"
-ENV ERLANG_VERSION=24.3
-# elixir 1.13.4
-ENV ELIXIR_COMMIT=7e4fbe657dbf9c3e19e3d2bd6c17cc6d724b4710
+ENV ERLANG_VERSION=25.0
+# elixir 1.14.0
+ENV ELIXIR_COMMIT=c5151e6890b5ac8df13276459696f0f47a8e634b
 ENV NODE_VERSION=14.18.1
-ENV PHOENIX_VERSION=1.6.6
+ENV PHOENIX_VERSION=1.6.11
 
 RUN \
     apk add --no-cache --update \
@@ -33,7 +33,7 @@ RUN \
       grep \
       perl-dev \
       poppler-utils
-  RUN apk --no-cache add -U musl musl-dev ncurses-libs libssl1.1 libressl3.4-libcrypto bash weasyprint
+  RUN apk --no-cache add -U musl musl-dev ncurses-libs libssl1.1 libressl3.5-libcrypto bash weasyprint py3-brotli
   RUN apk add --update-cache \
       xvfb \
       dbus \
