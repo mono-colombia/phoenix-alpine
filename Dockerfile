@@ -1,6 +1,6 @@
 FROM alpine:3.16
 LABEL maintainer="Jhon Pedroza <jpedroza@cuentamono.com>"
-ENV ERLANG_VERSION=25.0
+ENV ERLANG_VERSION=24.3
 # elixir 1.14.0
 ENV ELIXIR_COMMIT=c5151e6890b5ac8df13276459696f0f47a8e634b
 ENV NODE_VERSION=14.18.1
