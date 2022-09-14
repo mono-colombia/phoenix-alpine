@@ -24,6 +24,7 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 RUN touch ~/.bashrc
 RUN echo 'alias vim=nvim' >> ~/.bashrc
+RUN /bin/bash -c "mkdir ~/.mix"
 RUN /bin/bash -c "mix archive.install --force github hexpm/hex branch latest"
 RUN /bin/bash -c "mix local.rebar --force"
 RUN /bin/bash -c "mix archive.install --force hex phx_new $PHOENIX_VERSION"
