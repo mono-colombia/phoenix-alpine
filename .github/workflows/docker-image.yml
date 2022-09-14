@@ -41,7 +41,6 @@ jobs:
       - name: Build and Push ...
         uses: docker/build-push-action@v3
         with:
-          builder: ${{ steps.docker_buildx.outputs.name }}
           context: .
           file: ./Dockerfile
           push: true
