@@ -15,9 +15,6 @@ jobs:
 
       - name: Configure QEMU action ...
         uses: docker/setup-qemu-action@v1
-        with:
-          image: tonistiigi/binfmt:latest
-          platforms: all
 
       - name: Available platforms on QEMU ...
         run: echo ${{ steps.qemu.outputs.platforms }}
