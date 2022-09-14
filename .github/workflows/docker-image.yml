@@ -32,11 +32,11 @@ jobs:
           echo "Platforms: ${{ steps.buildx.outputs.platforms }}"
 
 
-     - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: monocolombia/phoenix-alpine
+      - name: Docker meta
+          id: meta
+          uses: docker/metadata-action@v4
+          with:
+            images: monocolombia/phoenix-alpine
 
       - name: Login to DockerHub ...
         if: github.event_name != 'pull_request'
