@@ -5,12 +5,14 @@ ENV PHOENIX_VERSION=1.6.12
 # Try to appsignal on m1
 ENV APPSIGNAL_BUILD_FOR_MUSL=1
 
+# Add edge repository
+RUN echo "@edge http://dl-cdn.alpinelinux.org/alpine/edge/main">>/etc/apk/repositories
 # Base packages and nodejs
 RUN apk add --no-cache --update \
   bash gcc \
   libc-dev git nodejs npm inotify-tools \
   ca-certificates openssl-dev make automake \
-  autoconf musl musl-dev gnupg neovim
+  autoconf musl musl-dev neovim gnupg@edge
 
 # PDF tools
 RUN apk --no-cache add -U weasyprint py3-brotli poppler-utils
