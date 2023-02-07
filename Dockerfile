@@ -1,7 +1,7 @@
-FROM hexpm/elixir:1.14.0-erlang-24.3.4.5-alpine-3.16.2
+FROM hexpm/elixir:1.14.3-erlang-24.3.4.8-alpine-3.16.3
 LABEL maintainer="Jhon Pedroza <jpedroza@cuentamono.com>"
 
-ENV PHOENIX_VERSION=1.6.12
+ENV PHOENIX_VERSION=1.6.15
 # Try to appsignal on m1
 ENV APPSIGNAL_BUILD_FOR_MUSL=1
 
@@ -17,6 +17,7 @@ RUN apk --no-cache add -U weasyprint py3-brotli poppler-utils
 # Wallaby tests
 RUN apk add --update-cache g++ chromium chromium-chromedriver
 
+RUN mkdir -p /usr/share/fonts/TTF
 RUN wget -O /usr/share/fonts/TTF/Lato-Regular.ttf https://mono-colombia-public.s3.amazonaws.com/fonts/Lato-Regular.ttf
 
 ENV LANG en_US.UTF-8
