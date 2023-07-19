@@ -2,7 +2,7 @@ name: Docker Buildx
 
 on:
   push:
-    branches: [ jhon/upgrade-elixir-1.14.3 ]
+    branches: [ jhon/upgrade-elixir-1.14.5 ]
 
 jobs:
   build:
