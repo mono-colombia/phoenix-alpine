@@ -44,7 +44,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: monocolombia/phoenix-alpine:1.14.3
+          tags: monocolombia/phoenix-alpine:1.14.5
           # Inline-Cache
           # cache-from: type=registry,ref=monocolombia/phoenix-alpine:1.14.0-arch
           # cache-to: type=inline
