@@ -1,0 +1,94 @@
+variables:
+  DOCKER_TLS_CERTDIR: "/certs"
+  DOCKER_DRIVER: overlay2
+  FF_NETWORK_PER_BUILD: "true"
+  DOCKER_REGISTRY_IMAGE: "monocolombia/phoenix-alpine"
+  AWS_ECR_PUBLIC_REGISTRY: "public.ecr.aws/monocolombia"
+  AWS_ECR_PUBLIC_REGISTRY_IMAGE: "${AWS_ECR_PUBLIC_REGISTRY}/phoenix-alpine"
+  TAG: "1.14.5"
+
+.default_build:
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - apk --no-cache add git
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin
+  interruptible: true
+
+build_amd64:
+  extends: .default_build
+  stage: build
+  script:
+    - docker build --pull -t "${CI_REGISTRY_IMAGE}:${TAG}-amd64" .
+    - docker run --rm ${CI_REGISTRY_IMAGE}:${TAG}-amd64 sh -c "elixir --version"
+    - |
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        docker push "${CI_REGISTRY_IMAGE}:${TAG}-amd64"
+      fi
+  tags:
+    - amd64
+
+build_arm64:
+  extends: .default_build
+  stage: build
+  script:
+    - docker build --pull -t "${CI_REGISTRY_IMAGE}:${TAG}-arm64" .
+    - docker run --rm ${CI_REGISTRY_IMAGE}:${TAG}-arm64 sh -c "elixir --version"
+    - |
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        docker push "${CI_REGISTRY_IMAGE}:${TAG}-arm64"
+      fi
+  tags:
+    - arm64
+
+push-multi-arch:
+  stage: deploy
+  image:
+    name: mplatform/manifest-tool:alpine
+    entrypoint: [""]
+  services:
+    - docker:dind
+  before_script:
+    - apk --no-cache add docker-cli skopeo aws-cli git
+    - |
+      echo "Login into GitLab Registry ($CI_REGISTRY)"
+      echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin
+    - |
+      echo "Login into Docker Hub Registry (docker.io)"
+      echo "$DOCKERHUB_TOKEN" | docker login --username $DOCKERHUB_USERNAME --password-stdin
+    - |
+      echo "Login into AWS ECR-Public Registry ($AWS_ECR_PUBLIC_REGISTRY)"
+      aws ecr-public get-login-password --region us-east-1 | docker login $AWS_ECR_PUBLIC_REGISTRY --username AWS --password-stdin
+    - |
+      cat << EOF > manifest.yml
+      image: ${CI_REGISTRY_IMAGE}:${TAG}
+      manifests:
+      - image: ${CI_REGISTRY_IMAGE}:${TAG}-arm64
+        platform:
+          architecture: arm64
+          os: linux
+      - image: ${CI_REGISTRY_IMAGE}:${TAG}-amd64
+        platform:
+          architecture: amd64
+          os: linux
+      EOF
+    - |
+      cat << EOF > manifest-inspect.sh
+      echo "---- ${CI_REGISTRY_IMAGE}:${TAG} ----"
+      /manifest-tool inspect ${CI_REGISTRY_IMAGE}:${TAG}
+      echo "---- ${DOCKER_REGISTRY_IMAGE}:${TAG} ----"
+      /manifest-tool inspect ${DOCKER_REGISTRY_IMAGE}:${TAG}
+      echo "---- ${AWS_ECR_PUBLIC_REGISTRY_IMAGE}:${TAG} ----"
+      /manifest-tool inspect ${AWS_ECR_PUBLIC_REGISTRY_IMAGE}:${TAG}
+      EOF
+  script:
+    - /manifest-tool push from-spec manifest.yml
+    - skopeo copy --multi-arch all docker://${CI_REGISTRY_IMAGE}:${TAG} docker://${DOCKER_REGISTRY_IMAGE}:${TAG}
+    - skopeo copy --multi-arch all docker://${CI_REGISTRY_IMAGE}:${TAG} docker://${AWS_ECR_PUBLIC_REGISTRY_IMAGE}:${TAG}
+  after_script:
+    - if [[ -f "manifest-inspect.sh" ]]; then chmod +x manifest-inspect.sh && ./manifest-inspect.sh; fi
+  tags:
+    - t2.micro
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "$CI_DEFAULT_BRANCH"'
