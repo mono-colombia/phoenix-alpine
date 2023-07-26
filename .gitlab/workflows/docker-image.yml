@@ -21,7 +21,7 @@ build_amd64:
   stage: build
   script:
     - docker build --pull -t "${CI_REGISTRY_IMAGE}:${TAG}-amd64" .
-    - docker run --rm ${CI_REGISTRY_IMAGE}:${TAG}-amd64 sh -c "elixir --version"
+    - docker run --rm ${CI_REGISTRY_IMAGE}:${TAG}-amd64 sh -c "echo ----- && uname -m && echo && elixir --version && echo -----"
     - |
       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
         docker push "${CI_REGISTRY_IMAGE}:${TAG}-amd64"
@@ -34,7 +34,7 @@ build_arm64:
   stage: build
   script:
     - docker build --pull -t "${CI_REGISTRY_IMAGE}:${TAG}-arm64" .
-    - docker run --rm ${CI_REGISTRY_IMAGE}:${TAG}-arm64 sh -c "elixir --version"
+    - docker run --rm ${CI_REGISTRY_IMAGE}:${TAG}-arm64 sh -c "echo ----- && uname -m && echo && elixir --version && echo -----"
     - |
       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
         docker push "${CI_REGISTRY_IMAGE}:${TAG}-arm64"
