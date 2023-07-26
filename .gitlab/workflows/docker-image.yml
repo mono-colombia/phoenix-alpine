@@ -44,13 +44,11 @@ build_arm64:
 
 push-multi-arch:
   stage: deploy
-  image:
-    name: mplatform/manifest-tool:alpine
-    entrypoint: [""]
+  image: docker:latest
   services:
     - docker:dind
   before_script:
-    - apk --no-cache add docker-cli skopeo aws-cli git
+    - apk --no-cache add skopeo aws-cli git
     - |
       echo "Login into GitLab Registry ($CI_REGISTRY)"
       echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin
@@ -61,29 +59,16 @@ push-multi-arch:
       echo "Login into AWS ECR-Public Registry ($AWS_ECR_PUBLIC_REGISTRY)"
       aws ecr-public get-login-password --region us-east-1 | docker login $AWS_ECR_PUBLIC_REGISTRY --username AWS --password-stdin
     - |
-      cat << EOF > manifest.yml
-      image: ${CI_REGISTRY_IMAGE}:${TAG}
-      manifests:
-      - image: ${CI_REGISTRY_IMAGE}:${TAG}-arm64
-        platform:
-          architecture: arm64
-          os: linux
-      - image: ${CI_REGISTRY_IMAGE}:${TAG}-amd64
-        platform:
-          architecture: amd64
-          os: linux
-      EOF
-    - |
       cat << EOF > manifest-inspect.sh
       echo "---- ${CI_REGISTRY_IMAGE}:${TAG} ----"
-      /manifest-tool inspect ${CI_REGISTRY_IMAGE}:${TAG}
+      docker buildx imagetools inspect ${CI_REGISTRY_IMAGE}:${TAG}
       echo "---- ${DOCKER_REGISTRY_IMAGE}:${TAG} ----"
-      /manifest-tool inspect ${DOCKER_REGISTRY_IMAGE}:${TAG}
+      docker buildx imagetools inspect ${DOCKER_REGISTRY_IMAGE}:${TAG}
       echo "---- ${AWS_ECR_PUBLIC_REGISTRY_IMAGE}:${TAG} ----"
-      /manifest-tool inspect ${AWS_ECR_PUBLIC_REGISTRY_IMAGE}:${TAG}
+      docker buildx imagetools inspect ${AWS_ECR_PUBLIC_REGISTRY_IMAGE}:${TAG}
       EOF
   script:
-    - /manifest-tool push from-spec manifest.yml
+    - docker buildx imagetools create -t ${CI_REGISTRY_IMAGE}:${TAG} ${CI_REGISTRY_IMAGE}:${TAG}-amd64 ${CI_REGISTRY_IMAGE}:${TAG}-arm64
     - skopeo copy --multi-arch all docker://${CI_REGISTRY_IMAGE}:${TAG} docker://${DOCKER_REGISTRY_IMAGE}:${TAG}
     - skopeo copy --multi-arch all docker://${CI_REGISTRY_IMAGE}:${TAG} docker://${AWS_ECR_PUBLIC_REGISTRY_IMAGE}:${TAG}
   after_script:
