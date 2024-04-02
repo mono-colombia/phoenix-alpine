@@ -1,4 +1,4 @@
-FROM hexpm/elixir:1.15.7-erlang-25.3.2.7-alpine-3.17.5
+FROM hexpm/elixir:1.16.2-erlang-25.3.2.10-alpine-3.17.7
 LABEL maintainer="Jhon Pedroza <jpedroza@cuentamono.com>"
 
 ENV PHOENIX_VERSION=1.6.15
