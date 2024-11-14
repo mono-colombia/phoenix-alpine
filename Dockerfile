@@ -1,7 +1,7 @@
-FROM hexpm/elixir:1.16.2-erlang-26.2.4-alpine-3.19.1
+FROM hexpm/elixir:1.17.3-erlang-27.1.2-alpine-3.20.3
 LABEL maintainer="Jhon Pedroza <jpedroza@cuentamono.com>"
 
-ENV PHOENIX_VERSION=1.6.15
+ENV PHOENIX_VERSION=1.7.14
 # Try to appsignal on m1
 ENV APPSIGNAL_BUILD_FOR_MUSL=1
 
@@ -20,9 +20,9 @@ RUN apk add --update-cache g++ chromium chromium-chromedriver
 RUN mkdir -p /usr/share/fonts/TTF
 RUN wget -O /usr/share/fonts/TTF/Lato-Regular.ttf https://mono-colombia-public.s3.amazonaws.com/fonts/Lato-Regular.ttf
 
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
 RUN touch ~/.bashrc
 RUN echo 'alias vim=nvim' >> ~/.bashrc
 RUN /bin/bash -c "mix local.hex --force"
