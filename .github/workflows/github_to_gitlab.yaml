@@ -2,7 +2,7 @@ name: Mirror and run GitLab CI
 
 on:
   push:
-    branches: [master]
+    branches: [feat/mirror-ssh]
 
 jobs:
   to_gitlab_ci:
