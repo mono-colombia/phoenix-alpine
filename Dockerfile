@@ -20,6 +20,9 @@ RUN apk add --update-cache g++ chromium chromium-chromedriver
 RUN mkdir -p /usr/share/fonts/TTF
 RUN wget -O /usr/share/fonts/TTF/Lato-Regular.ttf https://mono-colombia-public.s3.amazonaws.com/fonts/Lato-Regular.ttf
 
+COPY ./certs/global_sign_ca.pem /usr/local/share/ca-certificates/global_sign_ca.crt
+RUN update-ca-certificates
+
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
