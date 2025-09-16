@@ -5,7 +5,7 @@ variables:
   DOCKER_REGISTRY_IMAGE: "monocolombia/phoenix-alpine"
   AWS_ECR_PUBLIC_REGISTRY: "public.ecr.aws/monocolombia"
   AWS_ECR_PUBLIC_REGISTRY_IMAGE: "${AWS_ECR_PUBLIC_REGISTRY}/phoenix-alpine"
-  TAG: "1.18.3"
+  TAG: "1.17.3"
 
 .default_build:
   image: docker:latest
