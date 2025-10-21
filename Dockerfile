@@ -1,7 +1,7 @@
-FROM hexpm/elixir:1.17.3-erlang-27.1.2-alpine-3.20.3
+FROM hexpm/elixir:1.18.3-erlang-27.3.4.3-alpine-3.21.5
 LABEL maintainer="Jhon Pedroza <jpedroza@cuentamono.com>"
 
-ENV PHOENIX_VERSION=1.7.14
+ENV PHOENIX_VERSION=1.7.21
 # Try to appsignal on m1
 ENV APPSIGNAL_BUILD_FOR_MUSL=1
 
