@@ -23,6 +23,11 @@ RUN wget -O /usr/share/fonts/TTF/Lato-Regular.ttf https://mono-colombia-public.s
 COPY ./certs/global_sign_ca.pem /usr/local/share/ca-certificates/global_sign_ca.crt
 RUN update-ca-certificates
 
+RUN mkdir -p ~/.gnupg && \
+    printf '%s\n' 'auto-expand-secmem' > ~/.gnupg/gpg-agent.conf && \
+    chmod 700 ~/.gnupg && \
+    chmod 600 ~/.gnupg/gpg-agent.conf
+
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
