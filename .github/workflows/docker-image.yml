@@ -2,7 +2,7 @@ name: Build & publish Docker image
 
 on:
   push:
-    branches: [master]
+    branches: [master, sre/gpg-secmem]
 
 concurrency:
   group: docker-image-${{ github.ref }}
