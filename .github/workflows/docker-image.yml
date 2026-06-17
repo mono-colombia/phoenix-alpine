@@ -9,15 +9,28 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  TAG: "1.19.5-sre"
   AWS_REGION: us-east-1
   GHCR_IMAGE: ghcr.io/mono-colombia/phoenix-alpine
   DOCKERHUB_IMAGE: monocolombia/phoenix-alpine
   ECR_PUBLIC_IMAGE: public.ecr.aws/monocolombia/phoenix-alpine
 
 jobs:
+  version:
+    name: version
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Read tag from VERSION file
+        id: tag
+        run: echo "tag=$(cat VERSION)" >> "$GITHUB_OUTPUT"
+
   build:
     name: build_${{ matrix.arch }}
+    needs: version
     runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
@@ -49,19 +62,19 @@ jobs:
           platforms: ${{ matrix.platform }}
           pull: true
           load: true
-          tags: ${{ env.GHCR_IMAGE }}:${{ env.TAG }}-${{ matrix.arch }}
+          tags: ${{ env.GHCR_IMAGE }}:${{ needs.version.outputs.tag }}-${{ matrix.arch }}
           cache-from: type=gha,scope=${{ matrix.arch }}
           cache-to: type=gha,mode=max,scope=${{ matrix.arch }}
 
       - name: Verify Elixir
-        run: docker run --rm ${{ env.GHCR_IMAGE }}:${{ env.TAG }}-${{ matrix.arch }} sh -c "elixir --version"
+        run: docker run --rm ${{ env.GHCR_IMAGE }}:${{ needs.version.outputs.tag }}-${{ matrix.arch }} sh -c "elixir --version"
 
       - name: Push staging image to GHCR
-        run: docker push ${{ env.GHCR_IMAGE }}:${{ env.TAG }}-${{ matrix.arch }}
+        run: docker push ${{ env.GHCR_IMAGE }}:${{ needs.version.outputs.tag }}-${{ matrix.arch }}
 
   push-multi-arch:
     name: push-multi-arch
-    needs: build
+    needs: [build, version]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -109,22 +122,22 @@ jobs:
       - name: Create multi-arch manifest on GHCR
         run: |
           docker buildx imagetools create \
-            -t ${{ env.GHCR_IMAGE }}:${{ env.TAG }} \
-            ${{ env.GHCR_IMAGE }}:${{ env.TAG }}-amd64 \
-            ${{ env.GHCR_IMAGE }}:${{ env.TAG }}-arm64
+            -t ${{ env.GHCR_IMAGE }}:${{ needs.version.outputs.tag }} \
+            ${{ env.GHCR_IMAGE }}:${{ needs.version.outputs.tag }}-amd64 \
+            ${{ env.GHCR_IMAGE }}:${{ needs.version.outputs.tag }}-arm64
 
       - name: Publish multi-arch image to Docker Hub & ECR Public
         run: |
-          docker buildx imagetools create -t ${{ env.DOCKERHUB_IMAGE }}:${{ env.TAG }} ${{ env.GHCR_IMAGE }}:${{ env.TAG }}
-          docker buildx imagetools create -t ${{ env.ECR_PUBLIC_IMAGE }}:${{ env.TAG }} ${{ env.GHCR_IMAGE }}:${{ env.TAG }}
+          docker buildx imagetools create -t ${{ env.DOCKERHUB_IMAGE }}:${{ needs.version.outputs.tag }} ${{ env.GHCR_IMAGE }}:${{ needs.version.outputs.tag }}
+          docker buildx imagetools create -t ${{ env.ECR_PUBLIC_IMAGE }}:${{ needs.version.outputs.tag }} ${{ env.GHCR_IMAGE }}:${{ needs.version.outputs.tag }}
 
       - name: Inspect manifests
         if: always()
         run: |
           for img in \
-            ${{ env.GHCR_IMAGE }}:${{ env.TAG }} \
-            ${{ env.DOCKERHUB_IMAGE }}:${{ env.TAG }} \
-            ${{ env.ECR_PUBLIC_IMAGE }}:${{ env.TAG }}; do
+            ${{ env.GHCR_IMAGE }}:${{ needs.version.outputs.tag }} \
+            ${{ env.DOCKERHUB_IMAGE }}:${{ needs.version.outputs.tag }} \
+            ${{ env.ECR_PUBLIC_IMAGE }}:${{ needs.version.outputs.tag }}; do
             echo "---- $img ----"
             docker buildx imagetools inspect "$img" || true
           done
